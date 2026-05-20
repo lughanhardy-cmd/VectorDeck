@@ -1,0 +1,892 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>VectorDeck | MSFS & X-Plane Route Planner</title>
+    <meta name="description" content="VectorDeck is a briefing-first virtual airline route planner for MSFS 2020, MSFS 2024, X-Plane 11 and X-Plane 12. Build routes, check aircraft realism, brief airports, load charts and send drafts to SimBrief.">
+    <meta property="og:title" content="VectorDeck | Virtual Airline Route Planner">
+    <meta property="og:description" content="Plan believable virtual airline sectors with route data, live METAR, airport briefings, charts and SimBrief handoff.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#07111f">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#" aria-label="VectorDeck home">
+        <span class="brand-mark">VD</span>
+        <span>VectorDeck</span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#builder">Builder</a>
+        <a href="#airport-briefing">Airports</a>
+        <a href="#charts">Charts</a>
+        <a href="#ops-lab">Ops Lab</a>
+        <a href="#profiles">Aircraft</a>
+        <a href="#vfr">VFR</a>
+        <a href="#routes">Routes</a>
+      </nav>
+      <a class="header-action" href="#builder">Open briefing</a>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <img class="hero-image" src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Airbus_A320_EC-KNM_Iberia_cockpit_%286211312673%29.jpg" alt="Airbus A320 cockpit view used as the VectorDeck flight planning hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <p class="eyebrow">The new way to fly...</p>
+          <h1 id="hero-title">Virtual Airline Route Planners</h1>
+          <p class="hero-copy">
+            A briefing-first planner for virtual airline pilots, built for MSFS 2020, MSFS 2024, X-Plane 11 and X-Plane 12.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-button" href="#builder">Start briefing</a>
+            <a class="secondary-button" href="#airport-briefing">Airport familiarisation</a>
+          </div>
+          <div class="hero-briefing" aria-label="Current briefing example">
+            <div>
+              <span>Status</span>
+              <strong>Ready for dispatch</strong>
+            </div>
+            <div>
+              <span>Live inputs</span>
+              <strong>METAR / Fleet / Route</strong>
+            </div>
+            <div>
+              <span>Output</span>
+              <strong>SimBrief handoff</strong>
+            </div>
+          </div>
+          <div class="sim-strip" aria-label="Supported simulators">
+            <span>MSFS 2020</span>
+            <span>MSFS 2024</span>
+            <span>X-Plane 11</span>
+            <span>X-Plane 12</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="beta-notice" id="beta-status" aria-live="polite">
+        <strong>Beta preview</strong>
+        <span id="connection-status">Run this through the local preview server for live METAR, airport lookup and feedback capture.</span>
+      </section>
+
+      <section class="data-status-section" aria-label="Data coverage status">
+        <article>
+          <span>Route database</span>
+          <strong id="route-data-count">Starter route set loading</strong>
+          <small id="route-data-status">Curated routes are available immediately.</small>
+        </article>
+        <article>
+          <span>Airport data</span>
+          <strong id="airport-data-status">OurAirports lookup</strong>
+          <small>Runways, elevation and airport metadata load through the local server.</small>
+        </article>
+        <article>
+          <span>Weather data</span>
+          <strong id="metar-data-status">AviationWeather METAR</strong>
+          <small>Live weather is proxied through the local server when online.</small>
+        </article>
+      </section>
+
+      <section class="wing-slide" aria-labelledby="wing-slide-title">
+        <div class="wing-copy">
+          <p class="eyebrow">From window seat to flight deck</p>
+          <h2 id="wing-slide-title">Pick a route that feels worth flying</h2>
+          <p>
+            Build sectors around the view, the airline, the aircraft and the arrival. Short hop, ocean crossing or sunset approach, the plan starts with a believable flight.
+          </p>
+          <a class="primary-button" href="#routes">Explore routes</a>
+        </div>
+        <div class="wing-window" aria-label="Aircraft wing view above clouds">
+          <div class="window-frame">
+            <div class="wing-sky">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="quick-stats" aria-label="Planning highlights">
+        <article>
+          <span class="stat-value">01</span>
+          <span class="stat-label">Select a route flown by real operators</span>
+        </article>
+        <article>
+          <span class="stat-value">02</span>
+          <span class="stat-label">Check fleet fit, weather and diversion</span>
+        </article>
+        <article>
+          <span class="stat-value">03</span>
+          <span class="stat-label">Brief the airport and send to SimBrief</span>
+        </article>
+      </section>
+
+      <section class="planner-section" id="builder" aria-labelledby="builder-title">
+        <div class="section-heading">
+          <p class="eyebrow">Real-world ops inspired</p>
+          <h2 id="builder-title">Draft a flight from routes airlines actually fly</h2>
+          <p class="section-copy">Start with the route, check the operator and fleet fit, then hand a clean dispatch draft to SimBrief.</p>
+        </div>
+
+        <div class="planner-layout">
+          <form class="planner-panel" id="planner-form">
+            <div class="field-grid">
+              <label>
+                Departure
+                <input id="departure" name="departure" value="EGLL" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false">
+              </label>
+              <label>
+                Arrival
+                <input id="arrival" name="arrival" value="LEMD" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false">
+              </label>
+              <label>
+                Planned diversion
+                <input id="alternate" name="alternate" value="LEBL" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false">
+              </label>
+              <label>
+                Aircraft
+                <select id="aircraft" name="aircraft">
+                  <option value="a320">Airbus A320</option>
+                  <option value="a319">Airbus A319</option>
+                  <option value="a321">Airbus A321</option>
+                  <option value="a321xlr">Airbus A321XLR</option>
+                  <option value="a220">Airbus A220</option>
+                  <option value="a330">Airbus A330</option>
+                  <option value="a339">Airbus A330neo</option>
+                  <option value="a340">Airbus A340</option>
+                  <option value="a350">Airbus A350</option>
+                  <option value="a35k">Airbus A350-1000</option>
+                  <option value="a380">Airbus A380</option>
+                  <option value="b738">Boeing 737-800</option>
+                  <option value="b38m">Boeing 737 MAX 8</option>
+                  <option value="b747">Boeing 747</option>
+                  <option value="b757">Boeing 757</option>
+                  <option value="b767">Boeing 767</option>
+                  <option value="b777">Boeing 777</option>
+                  <option value="b787">Boeing 787</option>
+                  <option value="e190">Embraer E190</option>
+                  <option value="e195">Embraer E195-E2</option>
+                  <option value="crj700">Bombardier CRJ 700</option>
+                  <option value="crj900">CRJ 900</option>
+                  <option value="crj1000">Bombardier CRJ 1000</option>
+                  <option value="e170">Embraer E170</option>
+                  <option value="e175">Embraer E175</option>
+                  <option value="atr72">ATR 72</option>
+                  <option value="dh8d">Dash 8 Q400</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="weather-panel" aria-live="polite">
+              <div class="weather-heading">
+                <span>Live weather briefing</span>
+                <button class="panel-button" type="button" id="refresh-weather">Refresh METAR</button>
+              </div>
+              <div class="weather-grid">
+                <article>
+                  <strong>Departure METAR</strong>
+                  <p id="departure-metar">Loading EGLL METAR...</p>
+                  <a id="departure-metar-link" href="https://aviationweather.gov/data/metar/?id=EGLL" target="_blank" rel="noreferrer">Open live source</a>
+                </article>
+                <article>
+                  <strong>Arrival METAR</strong>
+                  <p id="arrival-metar">Loading LEMD METAR...</p>
+                  <a id="arrival-metar-link" href="https://aviationweather.gov/data/metar/?id=LEMD" target="_blank" rel="noreferrer">Open live source</a>
+                </article>
+              </div>
+            </div>
+
+            <div class="toggles" aria-label="Flight options">
+              <label><input id="online-atc" type="checkbox" checked> Include online ATC</label>
+              <label><input id="weather" type="checkbox" checked> Use live weather</label>
+              <label><input id="briefing" type="checkbox"> Prepare dispatch brief</label>
+            </div>
+          </form>
+
+          <aside class="briefing-panel" aria-live="polite">
+            <div class="briefing-header">
+              <p class="eyebrow">Briefing preview</p>
+              <span id="callsign">VCT204</span>
+            </div>
+            <dl class="briefing-list">
+              <div>
+                <dt>City pair</dt>
+                <dd id="city-pair">EGLL -> LEMD</dd>
+              </div>
+              <div>
+                <dt>Aircraft</dt>
+                <dd id="aircraft-name">Airbus A320</dd>
+              </div>
+              <div>
+                <dt>Airline inspiration</dt>
+                <dd id="airline-count">3 operators</dd>
+              </div>
+              <div>
+                <dt>Route confidence</dt>
+                <dd id="route-confidence">Starter data</dd>
+              </div>
+            </dl>
+            <div class="airline-card">
+              <span>Airlines on this route</span>
+              <ul id="airline-list"></ul>
+            </div>
+            <div class="route-card">
+              <span>Dispatch basis</span>
+              <p id="route-preview">EGLL -> LEMD with live METAR and selected airline inspiration</p>
+            </div>
+            <p class="aircraft-warning" id="aircraft-warning" hidden></p>
+            <div class="briefing-actions">
+              <a class="panel-button" href="#airline-results">View airlines</a>
+              <a class="panel-button panel-button-dark" href="#simbrief-editor">Edit for SimBrief</a>
+              <a class="panel-button" href="#charts">Open charts</a>
+            </div>
+          </aside>
+        </div>
+
+        <div class="workflow-grid" aria-label="Route workflow">
+          <section class="workflow-panel" id="airline-results" aria-labelledby="airline-results-title">
+            <div class="workflow-heading">
+              <p class="eyebrow">Step 1</p>
+              <h3 id="airline-results-title">Choose an airline that flies it</h3>
+            </div>
+            <p class="workflow-copy">
+              Use the starter operator data to pick a real-world airline inspiration for the sector. If the route is missing, the tool now shows nearby starter routes worth trying.
+            </p>
+            <div class="airline-result-list" id="airline-result-list"></div>
+          </section>
+
+          <section class="workflow-panel" id="simbrief-editor" aria-labelledby="simbrief-editor-title">
+            <div class="workflow-heading">
+              <p class="eyebrow">Step 2</p>
+              <h3 id="simbrief-editor-title">Edit before SimBrief</h3>
+            </div>
+            <div class="simbrief-grid">
+              <label>
+                Airline
+                <input id="simbrief-airline" value="British Airways">
+              </label>
+              <label>
+                Callsign / flight no.
+                <input id="simbrief-callsign" value="AIB204">
+              </label>
+              <label>
+                Aircraft
+                <input id="simbrief-aircraft" value="Airbus A320">
+              </label>
+              <label>
+                City pair
+                <input id="simbrief-city-pair" value="EGLL -> LEMD">
+              </label>
+              <label>
+                Diversion
+                <input id="simbrief-alternate" value="LEBL">
+              </label>
+            </div>
+            <label>
+              SimBrief dispatch notes
+              <textarea id="simbrief-route" rows="5">EGLL -> LEMD
+Departure METAR: Loading...
+Arrival METAR: Loading...</textarea>
+            </label>
+            <div class="simbrief-actions">
+              <button class="panel-button" type="button" id="copy-simbrief">Copy draft</button>
+              <a class="panel-button panel-button-dark" id="simbrief-link" href="https://dispatch.simbrief.com/options/custom?airline=BAW&fltnum=204&type=A320&orig=EGLL&dest=LEMD" target="_blank" rel="noreferrer">Dispatch in SimBrief</a>
+            </div>
+            <p class="helper-text" id="copy-status">Review the draft, copy it, then paste it into SimBrief.</p>
+          </section>
+        </div>
+      </section>
+
+      <section class="airport-section" id="airport-briefing" aria-labelledby="airport-title">
+        <div class="section-heading">
+          <p class="eyebrow">Airport briefing</p>
+          <h2 id="airport-title">Look up an airport before you fly</h2>
+        </div>
+        <div class="airport-layout">
+          <form class="airport-panel" id="airport-form">
+            <label>
+              ICAO code
+              <input id="airport-code" value="EGLL" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false">
+            </label>
+            <label>
+              Runway units
+              <select id="runway-unit">
+                <option value="m">Meters</option>
+                <option value="ft">Feet</option>
+              </select>
+            </label>
+            <button class="panel-button panel-button-dark" type="submit">Show airport</button>
+            <p class="helper-text">Type any ICAO code. Starter notes are enhanced for airports like EGLL, EGAA, LOWI, LFLJ, NZQN, KJFK, OMDB and VHHH.</p>
+          </form>
+
+          <article class="airport-card" aria-live="polite">
+            <div class="airport-info">
+              <p class="eyebrow">Airport details</p>
+              <h3 id="airport-name">London Heathrow</h3>
+              <dl class="airport-facts">
+                <div>
+                  <dt>ICAO</dt>
+                  <dd id="airport-icao">EGLL</dd>
+                </div>
+                <div>
+                  <dt>Elevation</dt>
+                  <dd id="airport-elevation">83 ft</dd>
+                </div>
+                <div>
+                  <dt>Runways</dt>
+                  <dd id="airport-runways">09L/27R, 09R/27L</dd>
+                </div>
+                <div>
+                  <dt>Longest</dt>
+                  <dd id="airport-longest">3902 m</dd>
+                </div>
+                <div>
+                  <dt>Approaches</dt>
+                  <dd id="airport-approaches">ILS, RNAV, VOR</dd>
+                </div>
+              </dl>
+              <p id="airport-notes" class="airport-notes">Major hub with parallel runways, heavy traffic flow and strong wake separation discipline.</p>
+              <div class="airport-tags" id="airport-tags"></div>
+            </div>
+            <div class="runway-graphic" aria-label="Runway graphic" id="runway-graphic"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="performance-section" id="performance" aria-labelledby="performance-title">
+        <div class="section-heading">
+          <p class="eyebrow">Performance planning</p>
+          <h2 id="performance-title">Start take-off and landing checks</h2>
+        </div>
+        <div class="performance-grid">
+          <form class="performance-panel" id="performance-form">
+            <label>
+              Operation
+              <select id="performance-mode">
+                <option value="takeoff">Take-off</option>
+                <option value="landing">Landing</option>
+              </select>
+            </label>
+            <label>
+              Aircraft class
+              <select id="performance-class">
+                <option value="ga">General aviation</option>
+                <option value="regional">Regional jet / turboprop</option>
+                <option value="narrowbody">Narrowbody jet</option>
+                <option value="widebody">Widebody jet</option>
+              </select>
+            </label>
+            <label>
+              Runway length available
+              <input id="performance-runway" type="number" value="3902" min="300">
+            </label>
+            <button class="panel-button panel-button-dark" type="submit">Check runway margin</button>
+          </form>
+          <aside class="performance-result">
+            <span>Initial result</span>
+            <strong id="performance-summary">Plenty of runway for a dry take-off in this aircraft class.</strong>
+            <p id="performance-detail">This is a planning aid only. Use the aircraft manual or EFB for actual take-off and landing performance.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="content-grid" id="profiles" aria-labelledby="profiles-title">
+        <div class="section-heading">
+          <p class="eyebrow">Aircraft profiles</p>
+          <h2 id="profiles-title">Start with the heavies and work down</h2>
+        </div>
+        <article class="profile-card">
+          <span>A220 / A319 / A320 / A321</span>
+          <h3>Short-haul and thin routes</h3>
+          <p>Regional hops, holiday shuttles, domestic trunk routes, and long-range narrowbody sectors.</p>
+        </article>
+        <article class="profile-card">
+          <span>A330 / A340 / A350 / A380</span>
+          <h3>Airbus widebody ops</h3>
+          <p>Modern long-haul, older four-engine recreations, Gulf hub flying, and flagship superjumbo routes.</p>
+        </article>
+        <article class="profile-card">
+          <span>737 / 747 / 757 / 767 / 777 / 787</span>
+          <h3>Boeing and regional ops</h3>
+          <p>ETOPS twins, classic freighters, regional jets, turboprops, and serious long-haul sim nights.</p>
+        </article>
+      </section>
+
+      <section class="vfr-section" id="vfr" aria-labelledby="vfr-title">
+        <div class="section-heading">
+          <p class="eyebrow">VFR and general aviation</p>
+          <h2 id="vfr-title">Scenic flights for low and slow days</h2>
+        </div>
+        <div class="vfr-layout">
+          <article class="vfr-panel">
+            <h3>General aviation aircraft</h3>
+            <div class="aircraft-chip-grid" aria-label="General aviation aircraft">
+              <span>Cessna 152</span>
+              <span>Cessna 172 Skyhawk</span>
+              <span>Cessna 208 Caravan</span>
+              <span>Diamond DA40</span>
+              <span>Diamond DA62</span>
+              <span>Piper PA-28</span>
+              <span>Piper PA-34 Seneca</span>
+              <span>Beechcraft Bonanza</span>
+              <span>Beechcraft Baron</span>
+              <span>TBM 930</span>
+              <span>Cirrus SR22</span>
+              <span>Icon A5</span>
+            </div>
+          </article>
+          <article class="vfr-panel">
+            <h3>Starter VFR routes</h3>
+            <div class="vfr-route-list">
+              <div>
+                <strong>Goodwood to Isle of Wight</strong>
+                <span>EGHR -> EGHN | Coastline, Solent crossing, light GA</span>
+              </div>
+              <div>
+                <strong>Innsbruck Alpine circuit</strong>
+                <span>LOWI local | Valley flying, mountain weather, DA62 or C172</span>
+              </div>
+              <div>
+                <strong>Courchevel to Geneva</strong>
+                <span>LFLJ -> LSGG | Alpine departure, lake arrival, TBM or Caravan</span>
+              </div>
+              <div>
+                <strong>San Francisco Bay tour</strong>
+                <span>KSQL -> KHAF | Bridges, coastline, Class B awareness</span>
+              </div>
+              <div>
+                <strong>Sydney harbour scenic</strong>
+                <span>YSSY local | Harbour, coast, city skyline, DA40 or SR22</span>
+              </div>
+              <div>
+                <strong>Queenstown lake run</strong>
+                <span>NZQN local | Mountain VFR, lake turns, Caravan or Bonanza</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="airlines-section" aria-labelledby="airlines-title">
+        <div class="section-heading">
+          <p class="eyebrow">Known operators</p>
+          <h2 id="airlines-title">Major airlines in the starter database</h2>
+        </div>
+        <div class="airline-cloud" aria-label="Major airlines currently included">
+          <span>British Airways</span>
+          <span>Iberia</span>
+          <span>Virgin Atlantic</span>
+          <span>American Airlines</span>
+          <span>Delta Air Lines</span>
+          <span>United Airlines</span>
+          <span>Emirates</span>
+          <span>Qatar Airways</span>
+          <span>Etihad Airways</span>
+          <span>Singapore Airlines</span>
+          <span>Cathay Pacific</span>
+          <span>Qantas</span>
+          <span>Air France</span>
+          <span>KLM</span>
+          <span>Lufthansa</span>
+          <span>Turkish Airlines</span>
+          <span>ANA</span>
+          <span>Japan Airlines</span>
+          <span>Korean Air</span>
+          <span>Asiana Airlines</span>
+          <span>Air Canada</span>
+          <span>LATAM</span>
+          <span>South African Airways</span>
+          <span>Ethiopian Airlines</span>
+          <span>Ryanair</span>
+          <span>easyJet</span>
+          <span>Southwest Airlines</span>
+          <span>Jet2</span>
+          <span>Aer Lingus</span>
+          <span>SAS</span>
+          <span>Finnair</span>
+          <span>Norwegian</span>
+          <span>Austrian Airlines</span>
+          <span>Swiss</span>
+          <span>Saudia</span>
+          <span>Air India</span>
+          <span>Thai Airways</span>
+          <span>Malaysia Airlines</span>
+          <span>Air New Zealand</span>
+          <span>WestJet</span>
+          <span>Porter Airlines</span>
+          <span>Wideroe</span>
+          <span>Spirit Airlines</span>
+        </div>
+      </section>
+
+      <section class="routes-section" id="routes" aria-labelledby="routes-title">
+        <div class="section-heading">
+          <p class="eyebrow">Starter routes</p>
+          <h2 id="routes-title">More real-world inspired legs to load tonight</h2>
+        </div>
+        <div class="route-list">
+          <article>
+            <strong>London Heathrow to Madrid</strong>
+            <span>EGLL -> LEMD | British Airways, Iberia</span>
+          </article>
+          <article>
+            <strong>Seattle to San Francisco</strong>
+            <span>KSEA -> KSFO | Alaska Airlines, Delta, United</span>
+          </article>
+          <article>
+            <strong>London Heathrow to New York JFK</strong>
+            <span>EGLL -> KJFK | British Airways, Virgin Atlantic, American</span>
+          </article>
+          <article>
+            <strong>Dubai to Singapore</strong>
+            <span>OMDB -> WSSS | Emirates, Singapore Airlines</span>
+          </article>
+          <article>
+            <strong>Doha to London Heathrow</strong>
+            <span>OTHH -> EGLL | Qatar Airways, British Airways</span>
+          </article>
+          <article>
+            <strong>Tokyo Haneda to Los Angeles</strong>
+            <span>RJTT -> KLAX | ANA, Japan Airlines, American, Delta, United</span>
+          </article>
+          <article>
+            <strong>Paris Charles de Gaulle to Dubai</strong>
+            <span>LFPG -> OMDB | Air France, Emirates</span>
+          </article>
+          <article>
+            <strong>Istanbul to New York JFK</strong>
+            <span>LTFM -> KJFK | Turkish Airlines</span>
+          </article>
+          <article>
+            <strong>Abu Dhabi to London Heathrow</strong>
+            <span>OMAA -> EGLL | Etihad Airways</span>
+          </article>
+          <article>
+            <strong>Seoul Incheon to Los Angeles</strong>
+            <span>RKSI -> KLAX | Korean Air, Asiana, Delta</span>
+          </article>
+          <article>
+            <strong>Singapore to London Heathrow</strong>
+            <span>WSSS -> EGLL | British Airways, Singapore Airlines, Qantas</span>
+          </article>
+          <article>
+            <strong>Frankfurt to Dubai</strong>
+            <span>EDDF -> OMDB | Lufthansa, Emirates</span>
+          </article>
+          <article>
+            <strong>Manchester to Amsterdam</strong>
+            <span>EGCC -> EHAM | KLM, easyJet</span>
+          </article>
+          <article>
+            <strong>Sao Paulo to New York JFK</strong>
+            <span>SBGR -> KJFK | LATAM, American, Delta</span>
+          </article>
+          <article>
+            <strong>London Heathrow to Dublin</strong>
+            <span>EGLL -> EIDW | British Airways, Aer Lingus</span>
+          </article>
+          <article>
+            <strong>London Heathrow to Manchester</strong>
+            <span>EGLL -> EGCC | British Airways</span>
+          </article>
+          <article>
+            <strong>Amsterdam to Copenhagen</strong>
+            <span>EHAM -> EKCH | KLM, SAS, Norwegian</span>
+          </article>
+          <article>
+            <strong>Dubai to Bangkok</strong>
+            <span>OMDB -> VTBS | Emirates, Thai Airways</span>
+          </article>
+          <article>
+            <strong>Delhi to London Heathrow</strong>
+            <span>VIDP -> EGLL | Air India, British Airways, Virgin Atlantic</span>
+          </article>
+          <article>
+            <strong>Los Angeles to Honolulu</strong>
+            <span>KLAX -> PHNL | Delta, United, American, Southwest</span>
+          </article>
+          <article>
+            <strong>Chicago O'Hare to New York LaGuardia</strong>
+            <span>KORD -> KLGA | American, Delta, United</span>
+          </article>
+          <article>
+            <strong>Toronto to Montreal</strong>
+            <span>CYYZ -> CYUL | Air Canada, WestJet, Porter</span>
+          </article>
+          <article>
+            <strong>Bergen to Oslo</strong>
+            <span>ENBR -> ENGM | SAS, Norwegian, Wideroe</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="charts-section" id="charts" aria-labelledby="charts-title">
+        <div class="section-heading">
+          <p class="eyebrow">Charts and procedures</p>
+          <h2 id="charts-title">Open the charts before you brief</h2>
+          <p class="section-copy">Use free community chart sources where available, or open Navigraph Charts and sign in to your account for worldwide Jeppesen-style coverage.</p>
+        </div>
+        <div class="charts-grid">
+          <article class="chart-card chart-card-free">
+            <span>Free charts</span>
+            <h3>ChartFox</h3>
+            <p>Good first stop for free airport charts and procedures where coverage is available.</p>
+            <a class="panel-button panel-button-dark" href="https://chartfox.org/" target="_blank" rel="noreferrer">Open ChartFox</a>
+          </article>
+          <article class="chart-card chart-card-pro">
+            <span>Navigraph account</span>
+            <h3>Navigraph Charts</h3>
+            <p>Open Navigraph Charts, sign in to your Navigraph account, then brief SID, STAR, approach and airport plates.</p>
+            <a class="panel-button panel-button-dark" href="https://charts.navigraph.com/" target="_blank" rel="noreferrer">Open Navigraph Charts</a>
+          </article>
+          <article class="chart-card">
+            <span>Beta workflow</span>
+            <h3>Chart check reminder</h3>
+            <p>For now, VectorDeck opens your chart provider in a new tab. Direct account linking would need a proper Navigraph integration later.</p>
+            <a class="panel-button" href="#builder">Back to route builder</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="ops-lab-section" id="ops-lab" aria-labelledby="ops-lab-title">
+        <div class="section-heading">
+          <p class="eyebrow">Flight ops lab</p>
+          <h2 id="ops-lab-title">Plan the sector like a virtual airline dispatch desk</h2>
+          <p class="section-copy">Pick the style of flight, choose an airline, check likely runway direction, brief the charts, save it to your logbook, or let the generator build tonight's sector.</p>
+        </div>
+
+        <div class="ops-grid">
+          <article class="ops-panel ops-panel-primary">
+            <div class="ops-heading">
+              <span>Route search by mood</span>
+              <h3>Find a flight by vibe</h3>
+            </div>
+            <label>
+              Flying mood
+              <select id="mood-select">
+                <option value="short-hop">Short hop</option>
+                <option value="long-haul">Long haul</option>
+                <option value="scenic">Scenic</option>
+                <option value="busy-hub">Busy hub</option>
+                <option value="challenging">Challenging approach</option>
+                <option value="cargo">Cargo</option>
+                <option value="low-cost">Low-cost</option>
+                <option value="night">Night flight</option>
+              </select>
+            </label>
+            <div class="mini-result" id="mood-result"></div>
+            <button class="panel-button panel-button-dark" type="button" id="apply-mood-route">Load this route</button>
+          </article>
+
+          <article class="ops-panel">
+            <div class="ops-heading">
+              <span>Virtual airline mode</span>
+              <h3>Choose operator first</h3>
+            </div>
+            <label>
+              Airline
+              <select id="airline-mode-select"></select>
+            </label>
+            <div class="mini-result" id="airline-mode-result"></div>
+          </article>
+
+          <article class="ops-panel ops-panel-dark">
+            <div class="ops-heading">
+              <span>Surprise me</span>
+              <h3>Random flight generator</h3>
+            </div>
+            <p>One click picks a real-world inspired route, airline, aircraft, diversion and dispatch note.</p>
+            <button class="panel-button" type="button" id="random-flight">Generate flight</button>
+            <div class="mini-result" id="random-result"></div>
+          </article>
+        </div>
+
+        <div class="ops-grid ops-grid-wide">
+          <article class="ops-panel">
+            <div class="ops-heading">
+              <span>Gate and stand</span>
+              <h3>Terminal hint</h3>
+            </div>
+            <p id="gate-result">Select a route to see a likely terminal or stand area.</p>
+          </article>
+
+          <article class="ops-panel">
+            <div class="ops-heading">
+              <span>Runway in use helper</span>
+              <h3>Wind-based runway prompt</h3>
+            </div>
+            <p id="runway-helper-result">Live METAR will be used when available.</p>
+          </article>
+
+          <article class="ops-panel">
+            <div class="ops-heading">
+              <span>SID / STAR prompt</span>
+              <h3>Procedure checklist</h3>
+            </div>
+            <ul class="ops-checklist" id="procedure-checklist"></ul>
+          </article>
+
+          <article class="ops-panel">
+            <div class="ops-heading">
+              <span>Flight time estimate</span>
+              <h3>Block time</h3>
+            </div>
+            <p id="flight-time-result">Estimated after route selection.</p>
+          </article>
+
+          <article class="ops-panel">
+            <div class="ops-heading">
+              <span>Aircraft realism</span>
+              <h3>Realism score</h3>
+            </div>
+            <p id="realism-result">Choose airline, aircraft and route for a score.</p>
+          </article>
+
+          <article class="ops-panel">
+            <div class="ops-heading">
+              <span>SimBrief helper</span>
+              <h3>Import / export</h3>
+            </div>
+            <p id="simbrief-helper-result">Copy the dispatch draft or open SimBrief with the selected route already filled.</p>
+            <div class="briefing-actions">
+              <button class="panel-button" type="button" id="copy-ops-brief">Copy ops brief</button>
+              <a class="panel-button panel-button-dark" href="#simbrief-editor">Edit SimBrief draft</a>
+            </div>
+          </article>
+        </div>
+
+        <div class="ops-grid">
+          <article class="ops-panel">
+            <div class="ops-heading">
+              <span>Personal route logbook</span>
+              <h3>Save flights locally</h3>
+            </div>
+            <form class="logbook-form" id="logbook-form">
+              <label>
+                Notes
+                <textarea id="logbook-notes" rows="3" placeholder="Weather, scenery, landing rating, what to fly next..."></textarea>
+              </label>
+              <label>
+                Rating
+                <select id="logbook-rating">
+                  <option value="5">5 - brilliant sector</option>
+                  <option value="4">4 - would fly again</option>
+                  <option value="3">3 - solid</option>
+                  <option value="2">2 - rough</option>
+                  <option value="1">1 - not again</option>
+                </select>
+              </label>
+              <button class="panel-button panel-button-dark" type="submit">Save to logbook</button>
+            </form>
+            <div class="logbook-list" id="logbook-list"></div>
+          </article>
+
+          <article class="ops-panel">
+            <div class="ops-heading">
+              <span>Approach challenge cards</span>
+              <h3>Pick a famous arrival</h3>
+            </div>
+            <div class="challenge-list" id="challenge-list"></div>
+          </article>
+
+          <article class="ops-panel">
+            <div class="ops-heading">
+              <span>VATSIM / IVAO awareness</span>
+              <h3>Online network prep</h3>
+            </div>
+            <p>Check online ATC, file correctly, and keep charts ready before connecting.</p>
+            <div class="briefing-actions">
+              <a class="panel-button panel-button-dark" href="https://vatsim.net/" target="_blank" rel="noreferrer">Open VATSIM</a>
+              <a class="panel-button" href="https://www.ivao.aero/" target="_blank" rel="noreferrer">Open IVAO</a>
+            </div>
+          </article>
+        </div>
+
+        <div class="ops-grid ops-grid-wide">
+          <article class="ops-panel ops-panel-dark">
+            <div class="ops-heading">
+              <span>Cargo mode</span>
+              <h3>Freighter operators and routes</h3>
+            </div>
+            <label>
+              Cargo operator
+              <select id="cargo-select">
+                <option value="DHL">DHL</option>
+                <option value="FedEx">FedEx</option>
+                <option value="UPS">UPS</option>
+                <option value="Cargolux">Cargolux</option>
+                <option value="Qatar Cargo">Qatar Cargo</option>
+                <option value="Emirates SkyCargo">Emirates SkyCargo</option>
+              </select>
+            </label>
+            <div class="mini-result" id="cargo-result"></div>
+            <button class="panel-button" type="button" id="load-cargo-route">Load cargo route</button>
+          </article>
+
+          <article class="ops-panel fleet-library-panel">
+            <div class="ops-heading">
+              <span>Fleet library</span>
+              <h3>Aircraft, roles and good routes</h3>
+            </div>
+            <div class="fleet-library" id="fleet-library"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="reviews-section" aria-labelledby="reviews-title">
+        <div class="section-heading">
+          <p class="eyebrow">Community notes</p>
+          <h2 id="reviews-title">Early pilot reviews</h2>
+        </div>
+        <div class="review-grid">
+          <article>
+            <strong>Exactly what my sim nights needed.</strong>
+            <p>Being able to start from an airline and then shape the dispatch brief makes the route feel much more believable.</p>
+            <span>Long-haul simmer</span>
+          </article>
+          <article>
+            <strong>Clean, fast, and focused.</strong>
+            <p>The aircraft choices and real-world route inspiration make it easy to stop browsing and actually go fly.</p>
+            <span>Virtual airline pilot</span>
+          </article>
+          <article>
+            <strong>Great for finding new sectors.</strong>
+            <p>I like that it pushes me beyond the usual city pairs while still keeping the plan grounded in real airline ops.</p>
+            <span>X-Plane user</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="feedback-section" aria-labelledby="feedback-title">
+        <div class="section-heading">
+          <p class="eyebrow">Feedback</p>
+          <h2 id="feedback-title">Help shape the route planner</h2>
+        </div>
+        <form class="feedback-form" id="feedback-form">
+          <label>
+            Name
+            <input id="feedback-name" name="name" placeholder="Your name">
+          </label>
+          <label>
+            Email
+            <input id="feedback-email" name="email" type="email" placeholder="you@example.com">
+          </label>
+          <label>
+            What should we add next?
+            <textarea id="feedback-message" name="message" rows="5" placeholder="Routes, airlines, aircraft, weather sources, SimBrief ideas..."></textarea>
+          </label>
+          <button class="panel-button panel-button-dark" type="submit">Send feedback</button>
+          <p class="helper-text" id="feedback-status">Feedback is saved in the beta preview when the local server is running.</p>
+        </form>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>VectorDeck beta build</span>
+      <span>For flight simulation use only. Not for real-world navigation, briefing or flight operations.</span>
+      <span>Hero cockpit photo: BriYYZ, CC BY-SA 2.0.</span>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
